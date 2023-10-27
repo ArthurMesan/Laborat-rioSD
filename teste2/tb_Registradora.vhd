@@ -5,34 +5,37 @@ use ieee.std_logic_textio.all;
 use std.textio.all;
 use ieee.numeric_std.all;
  
-ENTITY tb_Registradora IS
-END tb_Registradora;
+entity tb_maquina is
+end tb_maquina;
  
-ARCHITECTURE behavior OF tb_Registradora IS 
+ARCHITECTURE behavior OF tb_maquina IS 
  
 -- Component Declaration for the Unit Under Test (UUT)
  
-component Registradora 
-    Port (
-        clock     : in  STD_LOGIC;  
-        rst   : in  STD_LOGIC;    
-        valor   : in  STD_LOGIC_VECTOR (3 downto 0);  
-        soma: in  STD_LOGIC;  
-		  subtracao: in  STD_LOGIC; 
-		  finalizado: in STD_LOGIC;
-        resultado: out STD_LOGIC_VECTOR (3 downto 0)  
-    );
+component maquina is
+	port (  INPUT  : in std_logic_vector(3 downto 0);
+			  clock  : in std_logic;
+			  reset  : in std_logic;
+			  i      : in std_logic; --verifica se é para somar ou subtrair 1 soma 0 subtrai
+			  x      : in std_logic; -- no estado B é usado para trocar de estado, no caso para o C.
+			  f      : in std_logic;	--verifica nenhuma entrada sera mais setada
+			  estado : out std_logic_vector(3 downto 0);
+			  OUTPUT : out std_logic_vector(3 downto 0);
+			  val_ld : out std_logic;
+			  sum_ld : out std_logic; 
+			  out_ld : out std_logic
+        );
 end component;
     
 signal clock                 : std_logic;
-signal rst                   : std_logic;
-signal data_in_valor         : std_logic_vector(3 downto 0);
-signal data_in_soma          : STD_LOGIC;
-signal data_in_subtracao     : STD_LOGIC;
-signal data_in_finalizado    : STD_LOGIC;
-signal data_output      : std_logic_vector(3 downto 0);
-constant max_value      : natural := 50;
-constant mim_value		: natural := 1;
+signal reset                 : std_logic;
+signal data_in_input         : std_logic_vector(3 downto 0);
+signal data_in_i             : STD_LOGIC;
+signal data_in_x             : STD_LOGIC;
+signal data_in_f             : STD_LOGIC;
+signal data_output           : std_logic_vector(3 downto 0);
+constant max_value           : natural := 50;
+constant mim_value		     : natural := 1;
 
 
 signal read_data_in    : std_logic:='0';
@@ -51,14 +54,14 @@ constant OFFSET     : time := 5 ns;
 
 BEGIN
 -- Instantiate the Unit Under Test (UUT) or Design Under Test (DUT)
-DUT: Registradora 
-    port map(clock     => clock,  
-             rst   => rst, 
-             valor   =>  data_in_valor,  
-             soma  =>  data_in_soma,
-				 subtracao  =>  data_in_subtracao, 
-				 finalizado   => data_in_finalizado,
-             resultado  =>  data_output);
+DUT: maquina
+    port map(clock     =>  clock,  
+             reset     =>  reset, 
+             INPUT     =>  data_in_input,  
+             i         =>  data_in_i,
+				 x         =>  data_in_x, 
+				 f         =>  data_in_f,
+             OUTPUT    =>  data_output);
 		  
 ------------------------------------------------------------------------------------
 ----------------- processo para gerar o sinal de clock 
@@ -77,15 +80,15 @@ DUT: Registradora
 ------------------------------------------------------------------------------------
 ----------------- processo para gerar o estimulo de reset
 ------------------------------------------------------------------------------------		
-	--sreset: process
-	--begin
-	--	rst <= '1';
-	--	for i in 1 to 2 loop
-	--		wait until rising_edge(clock);
-	--	end loop;
-	--	rst <= '0'; 
-	--	wait;	
-	--end process sreset;
+	sreset: process
+	begin
+		reset <= '1';
+		for i in 1 to 2 loop
+			wait until rising_edge(clock);
+		end loop;
+		reset <= '0'; 
+		wait;	
+	end process sreset;
 	
 	
 ------------------------------------------------------------------------------------
@@ -108,16 +111,16 @@ read_inputs_data_in:process
 			     readline(inputs_data_in,linea);
 				  
 				  read(linea,column1);
-				  data_in_valor <= column1;
+				  data_in_input <= column1;
 				  
 				  read(linea,column2);
-				  data_in_soma <= column2;
+				  data_in_i <= column2;
 				  
 				  read(linea,column3);
-				  data_in_subtracao <= column3;
+				  data_in_x <= column3;
 				  
-				  --read(linea,column4);
-				  --data_in_finalizado <= column4;
+				  read(linea,column4);
+				  data_in_f <= column4;
 				  
 			  end if;
 			  
