@@ -86,17 +86,7 @@ DUT: Registradora
 			wait until rising_edge(clock);
 		end loop;
 		rst <= '0'; 
-		
-		wait until rising_edge(clock);
-		wait until rising_edge(clock);
-		wait until rising_edge(clock);
-		wait until rising_edge(clock);
-		wait until rising_edge(clock);
-		wait until rising_edge(clock);
-		wait until rising_edge(clock);
-		rst <= '1';
-		wait until rising_edge(clock);
-		rst <= '0';
+	
 		wait;	
 	end process sreset;
 	
