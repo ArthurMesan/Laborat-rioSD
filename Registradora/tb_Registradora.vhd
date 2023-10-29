@@ -14,29 +14,29 @@ ARCHITECTURE behavior OF tb_Registradora IS
  
 component Registradora 
     Port (
-        clock     : in  STD_LOGIC;  
-        rst       : in  STD_LOGIC;    
-        valor     : in  STD_LOGIC_VECTOR (3 downto 0);  
-        soma      : in  STD_LOGIC;  
-		  subtracao : in  STD_LOGIC; 
-		  finalizado: in STD_LOGIC;
-        resultado : out STD_LOGIC_VECTOR (3 downto 0)  
+				clock       : in  STD_LOGIC;  
+				rst         : in  STD_LOGIC;    
+				valor       : in  STD_LOGIC_VECTOR (3 downto 0);  
+				soma        : in  STD_LOGIC;  
+				subtracao   : in  STD_LOGIC; 
+				finalizar   : in  STD_LOGIC;
+				resultado   : out STD_LOGIC_VECTOR (3 downto 0)
     );
 end component;
     
-signal clock                 : std_logic;
-signal rst                   : std_logic;
-signal data_in_valor         : std_logic_vector(3 downto 0);
-signal data_in_soma          : STD_LOGIC;
-signal data_in_subtracao     : STD_LOGIC;
-signal data_in_finalizado    : STD_LOGIC;
-signal data_output      : std_logic_vector(3 downto 0);
-constant max_value      : natural := 4;
-constant mim_value		: natural := 1;
+signal   clock                 : STD_LOGIC;
+signal   rst                   : STD_LOGIC;
+signal   data_in_valor         : STD_LOGIC_VECTOR (3 downto 0);
+signal   data_in_soma          : STD_LOGIC;
+signal   data_in_subtracao     : STD_LOGIC;
+signal   data_in_finalizar     : STD_LOGIC;
+signal   data_output           : STD_LOGIC_VECTOR (3 downto 0);
+constant max_value             : NATURAL := 100;
+constant mim_value		       : NATURAL := 1;
 
 
-signal read_data_in    : std_logic:='0';
-signal flag_write      : std_logic:='0';   
+signal read_data_in    : STD_LOGIC:='0';
+signal flag_write      : STD_LOGIC:='0';   
 
    
 file   inputs_data_in  : text open read_mode  is "data_in.txt";
@@ -44,7 +44,7 @@ file   outputs         : text open write_mode is "outputs.txt";
 
 
 -- Clock period definitions
-constant PERIOD     : time := 20 ns;
+constant PERIOD     : time := 10 ns;
 constant DUTY_CYCLE : real := 0.5;
 constant OFFSET     : time := 5 ns;
 
@@ -52,13 +52,13 @@ constant OFFSET     : time := 5 ns;
 BEGIN
 -- Instantiate the Unit Under Test (UUT) or Design Under Test (DUT)
 DUT: Registradora 
-    port map(clock     => clock,  
-             rst   => rst, 
-             valor   =>  data_in_valor,  
-             soma  =>  data_in_soma,
-				 subtracao  =>  data_in_subtracao, 
-				 finalizado   => data_in_finalizado,
-             resultado  =>  data_output);
+    port map(clock        =>  clock,  
+             rst          =>  rst, 
+             valor        =>  data_in_valor,  
+             soma         =>  data_in_soma,
+				 subtracao    =>  data_in_subtracao, 
+				 finalizar    =>  data_in_finalizar,
+             resultado    =>  data_output);
 		  
 ------------------------------------------------------------------------------------
 ----------------- processo para gerar o sinal de clock 
@@ -73,7 +73,7 @@ DUT: Registradora
                 WAIT FOR (PERIOD * DUTY_CYCLE);
             END LOOP CLOCK_LOOP;
         END PROCESS;
-
+		  
 ------------------------------------------------------------------------------------
 ----------------- processo para gerar o estimulo de reset
 ------------------------------------------------------------------------------------		
@@ -89,23 +89,28 @@ DUT: Registradora
 		wait;	
 	end process sreset;
 	
-	
 ------------------------------------------------------------------------------------
 ----------------- processo para leer os dados do arquivo data_in.txt
 ------------------------------------------------------------------------------------
 read_inputs_data_in:process
 	
-	variable linea : line;
+	variable linea   : line;
 	variable column1 : STD_LOGIC_VECTOR (3 downto 0);
 	variable column2 : STD_LOGIC;
 	variable column3 : STD_LOGIC;
 	variable column4 : STD_LOGIC;
 	
 	begin
+	
 	    wait until falling_edge(clock);
+		 
 		 while not endfile(inputs_data_in) loop
-		
-		      if read_data_in = '1' then
+			
+			if read_data_in = '1' then
+					
+				  wait until falling_edge(clock);
+				  wait until falling_edge(clock);
+				  wait until falling_edge(clock);
 				
 			     readline(inputs_data_in,linea);
 				  
@@ -118,8 +123,8 @@ read_inputs_data_in:process
 				  read(linea,column3);
 				  data_in_subtracao <= column3;
 				  
-				  --read(linea,column4);
-				  --data_in_finalizado <= column4;
+				  read(linea,column4);
+				  data_in_finalizar <= column4;
 				  
 			  end if;
 			  
@@ -166,7 +171,7 @@ read_inputs_data_in:process
 		 variable linea  : line;
 		 variable output : STD_LOGIC_VECTOR (3 downto 0);
 	 begin
-	     wait until clock ='0';
+	     wait until rising_edge(clock);
 		 while true loop
 			 if (flag_write ='1')then
 				 output := data_output;
