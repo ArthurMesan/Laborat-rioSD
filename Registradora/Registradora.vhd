@@ -34,14 +34,16 @@ begin
                     proximo_estado <= SOMANDO;
                elsif subtracao = '1' then
                     proximo_estado <= SUBTRAINDO;
-				   elsif finalizar = '1' then 
-						  proximo_estado <= INICIAL;
 					else
                     proximo_estado <= ESPERANDO_VALOR;
                end if;
+					
+					if finalizar = '1' then 
+						  proximo_estado <= INICIAL;
+					end if;
 
 				when SOMANDO =>
-               valor_acumulado <= std_logic_vector(unsigned(valor) + unsigned(valor_acumulado));
+               valor_acumulado <= std_logic_vector(unsigned(valor_acumulado) + unsigned(valor));
 					proximo_estado <= MOSTRANDO_RESULTADO;
 
 				when SUBTRAINDO =>
