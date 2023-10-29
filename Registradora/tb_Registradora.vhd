@@ -86,6 +86,17 @@ DUT: Registradora
 			wait until rising_edge(clock);
 		end loop;
 		rst <= '0'; 
+		
+		wait until rising_edge(clock);
+		wait until rising_edge(clock);
+		wait until rising_edge(clock);
+		wait until rising_edge(clock);
+		wait until rising_edge(clock);
+		wait until rising_edge(clock);
+		wait until rising_edge(clock);
+		rst <= '1';
+		wait until rising_edge(clock);
+		rst <= '0';
 		wait;	
 	end process sreset;
 	
@@ -171,9 +182,14 @@ read_inputs_data_in:process
 		 variable linea  : line;
 		 variable output : STD_LOGIC_VECTOR (3 downto 0);
 	 begin
-	     wait until rising_edge(clock);
+	    wait until rising_edge(clock);
 		 while true loop
 			 if (flag_write ='1')then
+				
+				 wait until rising_edge(clock);
+				 wait until rising_edge(clock);
+				 wait until rising_edge(clock);
+				 
 				 output := data_output;
 				 write(linea,output);
 				 writeline(outputs,linea);
