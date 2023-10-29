@@ -1,4 +1,3 @@
-
 if {[file exists work]} {
 vdel -lib work -all
 }
@@ -11,6 +10,6 @@ add wave sim:/tb_Registradora/*
 view wave
 view structure
 view signals
-run 200ns
+run 1000ns
 #quit -force
 
