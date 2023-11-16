@@ -1,15 +1,31 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity teste_7seg is 
-	port (i : in  std_logic_vector (3 downto 0);
-			o : out std_logic_vector (6 downto 0));
-end teste_7seg;
+entity sensor_estacionamento is 
+	port (sensor : in std_logic;
+			clock  : in std_logic;
+			tempo : out std_logic_vect);
+end sensor_estacionamento;
 
-architecture teste_arch of teste_7seg is 
+architecture arch of sensor_estacionamento is 
+
 begin
-	with i select 
-		o <= "1000000" when "0000",
-			  "1111001" when "0001",
-			  "1111111" when "0000";
-end teste_arch;
+	
+	
+		when rising_edge then 
+			soma <= soma + 1;  
+			led_vermelho <= '0';
+		when soma = 1000
+			soma <= 0;
+			segundos= segundos+1;
+		when segundos=60 then
+			segundos <= 0;
+			minutos <= minutos+1;
+		when minutos=60 then
+			minutos <= 0;
+			hora <= minutos+1;
+		when hora=24 then 
+			hora <=0;
+		end if;
+	
+end arch;
